@@ -127,10 +127,12 @@ export function getWeekSummary(habits, referenceDate = new Date()) {
 function scheduledKeysForHabit(habit, referenceDate = new Date(), maxDays = 730) {
   const normalized = withHabitDefaults(habit, referenceDate)
   const start = parseLocalDateKey(normalized.startedAt)
+  const end = new Date(referenceDate)
+  end.setHours(23, 59, 59, 999)
   const keys = []
   let cursor = start
 
-  for (let i = 0; i < maxDays && cursor <= referenceDate; i += 1) {
+  for (let i = 0; i < maxDays && cursor <= end; i += 1) {
     if (normalized.days.includes(cursor.getDay())) keys.push(getLocalDateKey(cursor))
     cursor = addDays(cursor, 1)
   }
