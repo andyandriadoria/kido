@@ -8,6 +8,7 @@ import ParentHomeScreen from './screens/ParentHomeScreen.jsx'
 import HabitsScreen from './screens/HabitsScreen.jsx'
 import KidTodayScreen from './screens/KidTodayScreen.jsx'
 import KidJourneyScreen from './screens/KidJourneyScreen.jsx'
+import ProfileScreen from './screens/ProfileScreen.jsx'
 
 export default function App() {
   const { state, update, requestHabit, approveHabit, addHabit, patchHabit } = useKidoStore()
@@ -40,12 +41,13 @@ export default function App() {
   if (screen === 'starter-routine') return <div className="app-frame"><StarterRoutineScreen selected={draftGoals} onStart={startRoutine} onBack={() => setScreen('choose-goals')} /></div>
 
   const activeMode = mode
-  const screenTitle = { 'parent-home': 'Home', habits: 'Habits', 'kid-today': 'Today', 'kid-journey': 'Journey' }[screen]
+  const screenTitle = { 'parent-home': 'Home', habits: 'Habits', 'kid-today': 'Today', 'kid-journey': 'Journey', profile: mode === 'parent' ? 'Profile' : 'Me' }[screen]
   const mainScreen = {
     'parent-home': <ParentHomeScreen state={state} onApprove={handleApprove} setScreen={setScreen} />,
     habits: <HabitsScreen state={state} addHabit={addHabit} patchHabit={patchHabit} />,
     'kid-today': <KidTodayScreen state={state} onPractice={requestHabit} setScreen={setScreen} />,
     'kid-journey': <KidJourneyScreen state={state} setScreen={setScreen} mode={activeMode} />,
+    profile: <ProfileScreen state={state} setScreen={setScreen} mode={activeMode} />,
   }[screen] || <ParentHomeScreen state={state} onApprove={handleApprove} setScreen={setScreen} />
 
   return <div className={`app-frame app-mode-${activeMode}`}>
