@@ -14,6 +14,9 @@ export const STARTER_HABITS = [
   { id: 'read', title: 'Read for 10 minutes', emoji: '📚', time: 'Anytime', goal: 'reading' },
 ]
 
+// A habit needs repeated, parent-approved practice before it can graduate.
+export const GRADUATION_PRACTICE_DAYS = 7
+
 export const NAV_ITEMS = [
   { id: 'parent-home', label: 'Home', icon: '⌂', mode: 'parent' },
   { id: 'habits', label: 'Habits', icon: '◷', mode: 'parent' },
