@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getLocalDateKey, STARTER_HABITS } from '../data/constants.js'
+import { getLocalDateKey, GRADUATION_PRACTICE_DAYS, STARTER_HABITS } from '../data/constants.js'
 
 const KEY = 'kido-state-v1'
 const seed = {
@@ -14,7 +14,16 @@ const seed = {
 function readState() {
   try {
     const stored = localStorage.getItem(KEY)
-    return stored ? { ...seed, ...JSON.parse(stored) } : seed
+    if (!stored) return seed
+    const parsed = { ...seed, ...JSON.parse(stored) }
+    // Older demos allowed a habit to graduate after one tap. Reopen those
+    // habits unless they have enough distinct approved practice days.
+    parsed.habits = (parsed.habits || []).map(habit =>
+      habit.graduated && (habit.doneDates?.length || 0) < GRADUATION_PRACTICE_DAYS
+        ? { ...habit, graduated: false }
+        : habit,
+    )
+    return parsed
   } catch { return seed }
 }
 
