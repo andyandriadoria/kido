@@ -1,4 +1,4 @@
-const CACHE = 'kido-shell-v2'
+const CACHE = 'kido-shell-v3'
 const BASE = new URL(self.registration.scope).pathname.replace(/\/?$/, '/')
 const SHELL = [
   BASE,
@@ -24,6 +24,21 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return
 
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone()
+            caches.open(CACHE).then(cache => cache.put(`${BASE}index.html`, copy))
+          }
+          return response
+        })
+        .catch(() => caches.match(`${BASE}index.html`)),
+    )
+    return
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
       if (response.ok) {
@@ -31,9 +46,6 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE).then(cache => cache.put(event.request, copy))
       }
       return response
-    }).catch(() => {
-      if (event.request.mode === 'navigate') return caches.match(`${BASE}index.html`)
-      return new Response('Offline', { status: 503, statusText: 'Offline' })
-    })),
+    }).catch(() => new Response('Offline', { status: 503, statusText: 'Offline' }))),
   )
 })
