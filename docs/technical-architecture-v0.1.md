@@ -37,7 +37,7 @@ flowchart TD
   G --> H[Manifest + Service Worker]
 ```
 
-`App.jsx` selects the active screen and owns the parent/kid mode switch. `useKidoStore` owns the household state and exposes focused actions for onboarding, requesting practice approval, approving a habit, adding a habit, and graduating one. Screens receive state and callbacks as props. Shared presentation pieces live in `src/components`; reusable vocabulary and starter data live in `src/data`.
+`App.jsx` selects the active screen and owns the parent/kid mode switch. `useKidoStore` owns the household state and exposes focused actions for onboarding, requesting practice approval, approving a habit, adding a habit, and graduating one. Screens receive state and callbacks as props. Shared presentation pieces live in `src/components`; reusable vocabulary and starter data live in `src/data`. A supporting Profile view is available from the final navigation item in either mode.
 
 ## 4. Screen map
 
@@ -70,7 +70,7 @@ The onboarding path is Landing → Add Child → Choose Goals → Starter Routin
 }
 ```
 
-For this prototype, a child’s practice changes a habit to `waiting`; a parent approval adds today’s date to `doneDates` and awards 10 XP. A parent can move an active habit to the graduated collection. These records stay in the browser on the current device.
+For this prototype, a child’s practice changes a habit to `waiting`; a parent approval adds today’s date to `doneDates` and awards 10 XP. Graduation is available after seven distinct approved practice days, followed by explicit parent confirmation that the habit feels like second nature. This is a provisional v0.1 product rule and can be tuned after family testing. Stored habits graduated under the earlier one-tap demo rule are returned to active practice on load. These records stay in the browser on the current device.
 
 ## 6. PWA and offline behavior
 

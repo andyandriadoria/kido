@@ -16,7 +16,7 @@ export function AddChildScreen({ child, setChild, onNext, onBack }) {
 export function ChooseGoalsScreen({ selected, setSelected, onNext, onBack }) {
   const toggle = id => setSelected(selected.includes(id) ? selected.filter(item => item !== id) : selected.length < 3 ? [...selected, id] : selected)
   return <OnboardingFrame step={2} onBack={onBack}>
-    <span className="eyebrow">Choose what matters today</span><h1>What would you<br/>like to practice?</h1><p className="muted">Pick 1–3 goals. You can change them anytime.</p>
+    <span className="eyebrow">Build a foundation</span><h1>What would you<br/>like to practice?</h1><p className="muted">Choose up to 3 areas to help your child grow more independent.</p>
     <div className="goal-list">{GOALS.map(goal => <button key={goal.id} onClick={() => toggle(goal.id)} className={`goal-option ${selected.includes(goal.id) ? 'chosen' : ''}`} aria-pressed={selected.includes(goal.id)}><span className="goal-emoji">{goal.emoji}</span><span className="goal-text"><strong>{goal.label}</strong><small>{goal.helper}</small></span><span className="selection-check">{selected.includes(goal.id) && <Icon name="check" size={16}/>}</span></button>)}</div>
     <div className="selection-count">{selected.length} of 3 selected</div><button className="button button-primary button-full onboarding-cta" disabled={!selected.length} onClick={onNext}>Make a routine <Icon name="arrow" /></button>
   </OnboardingFrame>
