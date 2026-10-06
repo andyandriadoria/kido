@@ -91,3 +91,126 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 .kid-empty-day > span { font-size: 32px; }
 .kid-empty-day strong { color: var(--color-ink); font: 800 12px var(--font-display); }
 .kid-empty-day small { max-width: 230px; font-size: 9px; line-height: 1.45; }
+
+
+/* v0.1.2 UX Simplification */
+.habit-card[role="button"] { cursor: pointer; }
+.habit-card[role="button"]:focus-visible { outline: 3px solid rgba(79,110,247,.2); outline-offset: 2px; }
+.habit-paused { opacity: .68; background: #f8f8fa; }
+.paused-tag { color: #6c7281; background: #eceef3; border-radius: 5px; padding: 3px 5px; font-size: 7px; }
+.archived-note { margin: 14px 0 0; color: var(--color-muted); font-size: 9px; }
+
+.library-modal, .habit-editor-modal, .parent-pin-card, .graduation-modal {
+  max-height: calc(100svh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.library-modal { max-width: 470px; }
+.library-filters { display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
+.library-filters::-webkit-scrollbar { display: none; }
+.library-filters button { white-space: nowrap; min-height: 34px; padding: 0 11px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: white; color: var(--color-muted); font-size: 9px; font-weight: 800; }
+.library-filters button.selected { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-soft); }
+.library-list { display: grid; gap: 8px; margin-top: 2px; }
+.library-item { min-height: 70px; padding: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--color-border); border-radius: 16px; background: #fff; }
+.library-emoji { width: 40px; height: 40px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 12px; background: #fff5eb; font-size: 21px; }
+.library-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.library-copy strong { font: 800 11px var(--font-display); }
+.library-copy small { color: var(--color-muted); font-size: 8px; line-height: 1.35; }
+.library-actions { display: flex; flex-direction: column; gap: 5px; flex: 0 0 auto; }
+.library-actions button { min-height: 29px; padding: 0 8px; border-radius: 9px; font-size: 8px; font-weight: 800; cursor: pointer; }
+.library-add { border: 0; color: white; background: var(--color-primary); }
+.library-customize { border: 1px solid var(--color-border); color: var(--color-muted); background: white; }
+.library-actions button:disabled { cursor: default; opacity: .45; }
+.library-custom-button { margin-top: 12px !important; }
+
+.habit-editor-actions { margin-top: 10px; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.habit-editor-actions .button { margin-top: 0; min-height: 44px; }
+.archive-button { min-height: 44px; padding: 0 13px; border: 0; border-radius: 14px; background: #fff0f0; color: #b54c4c; font-size: 10px; font-weight: 800; cursor: pointer; }
+
+.weekday-picker { grid-template-columns: repeat(7, minmax(39px, 1fr)); overflow-x: auto; padding-bottom: 2px; }
+.weekday-picker button { min-width: 39px; height: 42px; font-size: 9px; }
+
+.parent-progress-overview { padding: 16px; display: flex; align-items: center; gap: 16px; border: 1px solid var(--color-border); border-radius: 20px; background: white; box-shadow: var(--shadow-card); }
+.parent-progress-overview > div:last-child { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.parent-progress-overview strong { font: 850 15px var(--font-display); }
+.parent-progress-overview small { color: var(--color-muted); font-size: 10px; }
+.parent-insight-grid { display: grid; gap: 9px; margin-top: 12px; }
+.parent-insight-card { padding: 13px; display: flex; align-items: flex-start; gap: 10px; border-radius: 17px; background: #f2faf6; border: 1px solid #dcefe6; }
+.parent-insight-card.attention { background: #fff9ee; border-color: #f3e6c8; }
+.parent-insight-card > span { font-size: 23px; }
+.parent-insight-card > div { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.parent-insight-card small { color: var(--color-muted); font-size: 8px; font-weight: 800; letter-spacing: .6px; }
+.parent-insight-card strong { font: 800 12px var(--font-display); }
+.parent-insight-card p { margin: 0; color: var(--color-muted); font-size: 9px; line-height: 1.4; }
+.parent-progress-list { display: grid; gap: 9px; }
+.parent-progress-row { padding: 12px; display: flex; align-items: flex-start; gap: 10px; border: 1px solid var(--color-border); border-radius: 17px; background: white; }
+.progress-habit-icon { width: 40px; height: 40px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 12px; background: #fff5eb; font-size: 21px; }
+.progress-habit-copy { min-width: 0; flex: 1; }
+.progress-row-title { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.progress-row-title strong { min-width: 0; font: 800 11px var(--font-display); }
+.progress-row-title span { white-space: nowrap; color: var(--color-primary); font-size: 8px; font-weight: 800; }
+.progress-habit-copy > small { display: block; margin-top: 3px; color: var(--color-muted); font-size: 8px; }
+.progress-track { height: 5px; margin: 8px 0 2px; overflow: hidden; border-radius: 10px; background: #edf0f5; }
+.progress-track i { display: block; height: 100%; border-radius: inherit; background: #59c99e; }
+
+.kid-time-groups { display: grid; gap: 15px; }
+.kid-time-group + .kid-time-group { padding-top: 4px; }
+.kid-time-heading { min-height: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 2px; }
+.kid-time-heading > span { font: 850 13px var(--font-display); }
+.kid-time-heading small { color: var(--color-muted); font-size: 11px; font-weight: 800; }
+.kid-time-group .kid-task-list { border-top: 1px solid #f0f1f5; }
+.kid-task { min-height: 78px; gap: 11px; }
+.task-emoji { width: 44px; height: 44px; border-radius: 14px; font-size: 23px; }
+.task-text { gap: 4px; }
+.task-text strong { font-size: 14px; line-height: 1.25; }
+.task-text small { font-size: 11px; line-height: 1.35; }
+.practice-button { min-height: 46px; padding: 0 12px; border-radius: 13px; font-size: 12px; }
+.task-complete { width: 44px; height: 44px; border-radius: 13px; }
+.waiting-badge { min-height: 34px; display: grid; place-items: center; padding: 0 9px; border-radius: 11px; background: #fff4dc; color: #ae7317; font-size: 9px; font-weight: 800; }
+.kid-encouragement { padding: 13px; font-size: 11px; line-height: 1.4; }
+.journey-peek { min-height: 76px; }
+.journey-peek small { font-size: 9px; }
+.journey-peek strong { font-size: 13px; }
+.kid-content .screen-header h1 { font-size: 25px; }
+.kid-content .screen-header p { font-size: 13px; }
+.streak-pill { min-height: 36px; display: inline-flex; align-items: center; font-size: 10px; }
+.xp-level { font-size: 12px; }
+.xp-copy > small { font-size: 10px; }
+.kid-today-heading h2 { font-size: 18px; }
+
+.avatar-options { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.avatar-option { width: 100%; min-width: 0; height: 45px; }
+
+.mode-switch span { min-width: 49px; padding-inline: 8px; }
+
+@media (max-width: 380px) {
+  .topbar { padding-inline: 14px; gap: 8px; }
+  .topbar-title { display: none; }
+  .brand-mark { font-size: 23px; }
+  .mode-switch span { min-width: 43px; padding-inline: 6px; font-size: 10px; }
+  .app-content { padding-inline: 14px; }
+  .onboarding-page { padding-inline: 14px; }
+  .onboarding-content h1 { font-size: 26px; }
+  .avatar-options { grid-template-columns: repeat(3, 1fr); }
+  .avatar-option { height: 47px; }
+  .library-item { align-items: flex-start; }
+  .library-actions { flex-direction: row; grid-column: 1 / -1; }
+  .library-item { flex-wrap: wrap; }
+  .library-copy { min-width: calc(100% - 54px); }
+  .library-actions { width: 100%; justify-content: flex-end; }
+  .habit-meta { flex-wrap: wrap; }
+  .habit-card { align-items: flex-start; }
+  .kid-task { flex-wrap: wrap; padding: 10px 0; }
+  .task-text { min-width: calc(100% - 58px); }
+  .practice-button, .waiting-badge, .task-complete { margin-left: 55px; }
+  .practice-button { flex: 1; justify-content: center; }
+  .task-complete { margin-right: auto; }
+}
+
+@media (max-height: 680px) {
+  .modal-backdrop { padding: 8px; }
+  .modal-card { max-height: calc(100svh - 16px); padding: 16px; }
+  .modal-card .muted { margin-bottom: 12px; }
+  .field-label { margin-top: 10px; }
+  .modal-card .button { margin-top: 14px; }
+}

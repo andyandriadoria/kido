@@ -13,19 +13,23 @@ export default function ParentPinModal({ mode = 'verify', savedPin = '', onSucce
 
   const submit = event => {
     event.preventDefault()
+
     if (!/^\d{4}$/.test(pin)) {
-      setError('Use exactly 4 numbers.')
+      setError('Gunakan tepat 4 angka.')
       return
     }
+
     if (isSetup && pin !== confirmPin) {
-      setError('The two PINs do not match.')
+      setError('Kedua PIN belum sama.')
       return
     }
+
     if (!isSetup && pin !== savedPin) {
-      setError('That PIN is not right. Try again.')
+      setError('PIN belum tepat. Coba lagi.')
       setPin('')
       return
     }
+
     setError('')
     onSuccess(pin)
   }
@@ -33,13 +37,13 @@ export default function ParentPinModal({ mode = 'verify', savedPin = '', onSucce
   return <div className="modal-backdrop pin-backdrop">
     <form className="modal-card parent-pin-card" onSubmit={submit} aria-labelledby="parent-pin-title">
       <div className="pin-lock">🔒</div>
-      <span className="eyebrow">PARENT SPACE</span>
-      <h2 id="parent-pin-title">{isSetup ? 'Create your Parent PIN' : 'Grown-ups only'}</h2>
+      <span className="eyebrow">AREA ORANG TUA</span>
+      <h2 id="parent-pin-title">{isSetup ? 'Terakhir, buat PIN orang tua' : 'Khusus orang tua'}</h2>
       <p className="muted">{isSetup
-        ? 'Use a 4-digit PIN before handing KIDO to your child. You can change this later.'
-        : 'Enter your 4-digit Parent PIN to manage habits and approvals.'}</p>
+        ? 'PIN 4 angka menjaga pengaturan KIDO agar tidak diubah anak.'
+        : 'Masukkan PIN 4 angka untuk membuka pengaturan dan persetujuan.'}</p>
 
-      <label className="field-label" htmlFor="parent-pin">{isSetup ? 'Create PIN' : 'Parent PIN'}</label>
+      <label className="field-label" htmlFor="parent-pin">{isSetup ? 'Buat PIN' : 'PIN orang tua'}</label>
       <input
         id="parent-pin"
         className="pin-input"
@@ -54,7 +58,7 @@ export default function ParentPinModal({ mode = 'verify', savedPin = '', onSucce
       />
 
       {isSetup && <>
-        <label className="field-label" htmlFor="confirm-pin">Confirm PIN</label>
+        <label className="field-label" htmlFor="confirm-pin">Ulangi PIN</label>
         <input
           id="confirm-pin"
           className="pin-input"
@@ -70,9 +74,9 @@ export default function ParentPinModal({ mode = 'verify', savedPin = '', onSucce
 
       {error && <p className="pin-error" role="alert">{error}</p>}
       <button className="button button-primary button-full" disabled={!canSubmit}>
-        {isSetup ? 'Save Parent PIN' : 'Unlock Parent Mode'}
+        {isSetup ? 'Simpan & buka KIDO untuk anak' : 'Buka Area Orang Tua'}
       </button>
-      <small className="pin-note">Prototype note: this PIN is stored only on this device and is not cryptographic security.</small>
+      <small className="pin-note">Pada prototipe ini, PIN hanya tersimpan di perangkat yang sedang digunakan.</small>
     </form>
   </div>
 }

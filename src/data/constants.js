@@ -1,25 +1,34 @@
 import { ALL_DAYS } from '../domain/habits.js'
 
 export const GOALS = [
-  { id: 'morning', label: 'Morning routine', emoji: '🌤️', helper: 'Start the day smoothly' },
-  { id: 'reading', label: 'Reading', emoji: '📚', helper: 'Make room for stories' },
-  { id: 'school', label: 'School responsibility', emoji: '🎒', helper: 'Get ready with confidence' },
-  { id: 'hygiene', label: 'Hygiene', emoji: '🪥', helper: 'Care for body and self' },
-  { id: 'chores', label: 'Home chores', emoji: '🧺', helper: 'Help out at home' },
-  { id: 'healthy', label: 'Healthy habits', emoji: '💧', helper: 'Feel good every day' },
+  { id: 'morning', label: 'Rutinitas pagi', emoji: '🌤️', helper: 'Mulai hari dengan lebih teratur' },
+  { id: 'reading', label: 'Membaca', emoji: '📚', helper: 'Bangun kebiasaan membaca' },
+  { id: 'school', label: 'Tanggung jawab sekolah', emoji: '🎒', helper: 'Siapkan kebutuhan sekolah sendiri' },
+  { id: 'hygiene', label: 'Kebersihan diri', emoji: '🪥', helper: 'Belajar merawat diri' },
+  { id: 'chores', label: 'Membantu di rumah', emoji: '🧺', helper: 'Ambil bagian dalam tugas rumah' },
+  { id: 'healthy', label: 'Kebiasaan sehat', emoji: '💧', helper: 'Rawat tubuh setiap hari' },
 ]
 
 const WEEKDAYS = [1, 2, 3, 4, 5]
 
 export const STARTER_HABITS = [
-  { id: 'bed', title: 'Make my bed', emoji: '🛏️', time: 'Morning', goal: 'morning', days: ALL_DAYS, xpValue: 5, approvalRequired: false },
-  { id: 'dress', title: 'Get ready by myself', emoji: '👕', time: 'Morning', goal: 'morning', days: ALL_DAYS, xpValue: 10, approvalRequired: false },
-  { id: 'read', title: 'Read for 10 minutes', emoji: '📚', time: 'Anytime', goal: 'reading', days: ALL_DAYS, xpValue: 20, approvalRequired: true },
-  { id: 'story', title: 'Tell someone what I read', emoji: '💬', time: 'Evening', goal: 'reading', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
-  { id: 'bag', title: 'Pack my school bag', emoji: '🎒', time: 'Evening', goal: 'school', days: WEEKDAYS, xpValue: 10, approvalRequired: false },
-  { id: 'schedule', title: 'Check tomorrow’s school plan', emoji: '🗓️', time: 'Evening', goal: 'school', days: WEEKDAYS, xpValue: 10, approvalRequired: false },
-  { id: 'teeth', title: 'Brush my teeth', emoji: '🪥', time: 'Morning', goal: 'hygiene', days: ALL_DAYS, xpValue: 5, approvalRequired: false },
-  { id: 'tidy', title: 'Put my things back', emoji: '🧺', time: 'Evening', goal: 'chores', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
-  { id: 'water', title: 'Drink enough water', emoji: '💧', time: 'Anytime', goal: 'healthy', days: ALL_DAYS, xpValue: 5, approvalRequired: false },
-  { id: 'move', title: 'Move my body for 15 minutes', emoji: '🏃', time: 'Anytime', goal: 'healthy', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
+  { id: 'bed', title: 'Rapikan tempat tidur', emoji: '🛏️', time: 'Morning', goal: 'morning', days: ALL_DAYS, xpValue: 5, approvalRequired: false },
+  { id: 'dress', title: 'Bersiap sendiri', emoji: '👕', time: 'Morning', goal: 'morning', days: ALL_DAYS, xpValue: 10, approvalRequired: false },
+  { id: 'read', title: 'Baca selama 10 menit', emoji: '📚', time: 'Anytime', goal: 'reading', days: ALL_DAYS, xpValue: 20, approvalRequired: true },
+  { id: 'story', title: 'Ceritakan yang sudah dibaca', emoji: '💬', time: 'Evening', goal: 'reading', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
+  { id: 'bag', title: 'Siapkan tas sekolah', emoji: '🎒', time: 'Evening', goal: 'school', days: WEEKDAYS, xpValue: 10, approvalRequired: false },
+  { id: 'schedule', title: 'Cek jadwal sekolah besok', emoji: '🗓️', time: 'Evening', goal: 'school', days: WEEKDAYS, xpValue: 10, approvalRequired: false },
+  { id: 'teeth', title: 'Sikat gigi', emoji: '🪥', time: 'Morning', goal: 'hygiene', days: ALL_DAYS, xpValue: 5, approvalRequired: false },
+  { id: 'tidy', title: 'Kembalikan barang ke tempatnya', emoji: '🧺', time: 'Evening', goal: 'chores', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
+  { id: 'water', title: 'Minum air yang cukup', emoji: '💧', time: 'Anytime', goal: 'healthy', days: ALL_DAYS, xpValue: 5, approvalRequired: false },
+  { id: 'move', title: 'Bergerak selama 15 menit', emoji: '🏃', time: 'Afternoon', goal: 'healthy', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
+]
+
+export const HABIT_LIBRARY = [
+  ...STARTER_HABITS,
+  { id: 'breakfast', title: 'Sarapan sebelum beraktivitas', emoji: '🥣', time: 'Morning', goal: 'healthy', days: ALL_DAYS, xpValue: 5, approvalRequired: false },
+  { id: 'desk', title: 'Rapikan meja belajar', emoji: '🧹', time: 'Evening', goal: 'chores', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
+  { id: 'homework', title: 'Cek tugas sekolah', emoji: '✏️', time: 'Afternoon', goal: 'school', days: WEEKDAYS, xpValue: 10, approvalRequired: true },
+  { id: 'clothes', title: 'Siapkan baju untuk besok', emoji: '👚', time: 'Evening', goal: 'independence', days: ALL_DAYS, xpValue: 10, approvalRequired: false },
+  { id: 'help-table', title: 'Bantu siapkan meja makan', emoji: '🍽️', time: 'Evening', goal: 'chores', days: ALL_DAYS, xpValue: 10, approvalRequired: true },
 ]

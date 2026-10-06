@@ -7,6 +7,7 @@ import ParentPinModal from './components/ParentPinModal.jsx'
 import LandingScreen from './screens/LandingScreen.jsx'
 import { AddChildScreen, ChooseGoalsScreen, StarterRoutineScreen } from './screens/OnboardingScreens.jsx'
 import ParentHomeScreen from './screens/ParentHomeScreen.jsx'
+import ParentProgressScreen from './screens/ParentProgressScreen.jsx'
 import HabitsScreen from './screens/HabitsScreen.jsx'
 import KidTodayScreen from './screens/KidTodayScreen.jsx'
 import KidJourneyScreen from './screens/KidJourneyScreen.jsx'
@@ -19,6 +20,9 @@ export default function App() {
     approveHabit,
     declineHabit,
     addHabit,
+    patchHabit,
+    togglePauseHabit,
+    archiveHabit,
     graduateHabit,
   } = useKidoStore()
 
@@ -26,10 +30,11 @@ export default function App() {
   const [draftChild, setDraftChild] = useState(state.child)
   const [draftGoals, setDraftGoals] = useState(state.goals)
   const [mode, setMode] = useState(() => state.setupComplete ? 'kid' : 'parent')
-  const [pinDialog, setPinDialog] = useState(() => state.setupComplete && !state.parentPin ? 'setup' : null)
+  const [pinDialog, setPinDialog] = useState(() => state.setupComplete && !state.parentPin ? 'setup-existing' : null)
 
   const startRoutine = included => {
     const startedAt = getLocalDateKey()
+
     update({
       child: draftChild,
       goals: draftGoals,
@@ -37,16 +42,17 @@ export default function App() {
       setupComplete: true,
       xp: 0,
     })
+
     setMode('parent')
     setScreen('parent-home')
-    setPinDialog('setup')
+    setPinDialog('setup-onboarding')
   }
 
   const switchMode = nextMode => {
     if (nextMode === mode) return
 
     if (nextMode === 'parent') {
-      setPinDialog(state.parentPin ? 'verify' : 'setup')
+      setPinDialog(state.parentPin ? 'verify' : 'setup-existing')
       return
     }
 
@@ -55,8 +61,18 @@ export default function App() {
   }
 
   const handlePinSuccess = pin => {
-    if (pinDialog === 'setup') update({ parentPin: pin })
+    const fromOnboarding = pinDialog === 'setup-onboarding'
+
+    if (pinDialog !== 'verify') update({ parentPin: pin })
+
     setPinDialog(null)
+
+    if (fromOnboarding) {
+      setMode('kid')
+      setScreen('kid-today')
+      return
+    }
+
     setMode('parent')
     setScreen('parent-home')
   }
@@ -82,21 +98,35 @@ export default function App() {
     return <div className="app-frame"><StarterRoutineScreen selected={draftGoals} onStart={startRoutine} onBack={() => setScreen('choose-goals')} /></div>
   }
 
-  const screenTitle = screen === 'kid-journey'
-    ? (mode === 'parent' ? 'Progress' : 'Journey')
-    : { 'parent-home': 'Home', habits: 'Habits', 'kid-today': 'Today' }[screen]
+  const screenTitle = {
+    'parent-home': 'Beranda',
+    habits: 'Kebiasaan',
+    'parent-progress': 'Progres',
+    'kid-today': 'Hari ini',
+    'kid-journey': 'Perjalanan',
+  }[screen]
 
   const mainScreen = {
     'parent-home': <ParentHomeScreen state={state} onApprove={handleApprove} setScreen={setScreen} />,
-    habits: <HabitsScreen state={state} addHabit={addHabit} graduateHabit={graduateHabit} />,
+    habits: <HabitsScreen
+      state={state}
+      addHabit={addHabit}
+      patchHabit={patchHabit}
+      togglePauseHabit={togglePauseHabit}
+      archiveHabit={archiveHabit}
+      graduateHabit={graduateHabit}
+    />,
+    'parent-progress': <ParentProgressScreen state={state} />,
     'kid-today': <KidTodayScreen state={state} onPractice={requestHabit} setScreen={setScreen} />,
-    'kid-journey': <KidJourneyScreen state={state} setScreen={setScreen} mode={mode} />,
+    'kid-journey': <KidJourneyScreen state={state} setScreen={setScreen} />,
   }[screen] || <ParentHomeScreen state={state} onApprove={handleApprove} setScreen={setScreen} />
 
+  const pinMode = pinDialog === 'verify' ? 'verify' : 'setup'
+
   return <div className={`app-frame app-mode-${mode}`}>
-    <TopBar title={screenTitle} mode={mode} setMode={switchMode} child={state.child} onBack={() => setScreen('parent-home')} />
+    <TopBar title={screenTitle} mode={mode} setMode={switchMode} child={state.child} onBack={() => setScreen(mode === 'kid' ? 'kid-today' : 'parent-home')} />
     <main className="screen-main">{mainScreen}</main>
     <BottomNav screen={screen} setScreen={setScreen} mode={mode} />
-    {pinDialog && <ParentPinModal mode={pinDialog} savedPin={state.parentPin} onSuccess={handlePinSuccess} />}
+    {pinDialog && <ParentPinModal mode={pinMode} savedPin={state.parentPin} onSuccess={handlePinSuccess} />}
   </div>
 }

@@ -20,67 +20,66 @@ export default function ParentHomeScreen({ state, onApprove, setScreen }) {
   const week = getWeekSummary(state.habits, today)
 
   const activeProgress = state.habits
-    .filter(habit => !habit.graduated)
+    .filter(habit => !habit.graduated && !habit.archived)
     .map(habit => ({ habit, progress: getHabitProgress(habit, today) }))
     .sort((a, b) => (STAGE_RANK[b.progress.stage] || 0) - (STAGE_RANK[a.progress.stage] || 0))
 
   const focus = activeProgress[0]
-  const todayLabel = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(today).toUpperCase()
+  const todayLabel = new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }).format(today).toUpperCase()
 
   return <div className="app-content">
     <ScreenHeader
       eyebrow={todayLabel}
-      title={`Hi, ${state.child.name}’s grown-up`}
-      subtitle="Little steps are adding up."
-      action={<button className="tiny-avatar" aria-label="Parent profile">👩🏻</button>}
+      title={`Hari ini bersama ${state.child.name}`}
+      subtitle="Lihat yang sudah selesai dan yang masih butuh bantuanmu."
     />
 
     <section className="daily-card">
       <div className="daily-card-top">
-        <div><span className="card-kicker">TODAY’S CHECK-IN</span><h2>{daily.goalMet ? 'Today’s rhythm is complete.' : 'You’re building a rhythm.'}</h2></div>
+        <div><span className="card-kicker">PROGRES HARI INI</span><h2>{daily.goalMet ? 'Target hari ini tercapai.' : 'Sedang membangun ritme.'}</h2></div>
         <div className="weather-illustration">☀️</div>
       </div>
       <div className="daily-summary">
         <ProgressRing value={daily.percentage} />
         <div className="daily-summary-copy">
-          <strong>{daily.completedCount} <span>of {daily.total} habits done</span></strong>
-          <small>{daily.total === 0 ? 'No habits are scheduled today.' : daily.completedCount === 0 ? 'Every journey begins with one small step.' : 'That’s a lovely bit of progress.'}</small>
+          <strong>{daily.completedCount} <span>dari {daily.total} selesai</span></strong>
+          <small>{daily.total === 0 ? 'Tidak ada kebiasaan yang dijadwalkan hari ini.' : daily.completedCount === 0 ? 'Belum ada yang dicentang hari ini.' : 'Ada progres yang bisa diapresiasi.'}</small>
         </div>
       </div>
-      <button className="text-button" onClick={() => setScreen('habits')}>See habits <Icon name="arrow" size={16} /></button>
+      <button className="text-button" onClick={() => setScreen('habits')}>Lihat kebiasaan <Icon name="arrow" size={16} /></button>
     </section>
 
     <section className="section-block">
       <div className="section-heading">
-        <div><span className="eyebrow">YOUR NEXT SMALL STEP</span><h2>Needs your thumbs-up</h2></div>
+        <div><span className="eyebrow">PERLU TINDAKAN</span><h2>Menunggu persetujuan</h2></div>
         <span className="count-pill">{waiting.length}</span>
       </div>
 
       {waiting.length
         ? <div className="approval-list">{waiting.map(habit => <div className="approval-item" key={habit.id}>
             <span className="habit-icon">{habit.emoji}</span>
-            <div className="approval-copy"><strong>{state.child.name} says they…</strong><span>{habit.title}</span></div>
-            <button className="approve-button" onClick={() => onApprove(habit.id)} aria-label={`Approve ${habit.title}`}><Icon name="check" size={17} /></button>
-            <button className="not-yet-button" onClick={() => onApprove(habit.id, false)}>Not yet</button>
+            <div className="approval-copy"><strong>{state.child.name} menandai selesai</strong><span>{habit.title}</span></div>
+            <button className="approve-button" onClick={() => onApprove(habit.id)} aria-label={`Setujui ${habit.title}`}><Icon name="check" size={17} /></button>
+            <button className="not-yet-button" onClick={() => onApprove(habit.id, false)}>Belum</button>
           </div>)}</div>
-        : <div className="empty-approval"><span>🌱</span><p>Nothing waiting right now.<br/><strong>Practice is where confidence grows.</strong></p></div>}
+        : <div className="empty-approval"><span>🌱</span><p>Tidak ada yang perlu dicek sekarang.<br/><strong>Biarkan anak melanjutkan harinya.</strong></p></div>}
     </section>
 
     {focus && <section className="section-block week-card">
       <div className="section-heading">
-        <div><span className="eyebrow">HABIT PROGRESS</span><h2>{focus.habit.title}</h2></div>
-        <button className="more-button" onClick={() => setScreen('habits')}>{focus.progress.label} <Icon name="arrow" size={15} /></button>
+        <div><span className="eyebrow">PALING DEKAT KE MANDIRI</span><h2>{focus.habit.title}</h2></div>
+        <button className="more-button" onClick={() => setScreen('parent-progress')}>{focus.progress.label} <Icon name="arrow" size={15} /></button>
       </div>
       <div className="habit-stage-summary">
-        <strong>{focus.progress.completionRate}% consistency</strong>
-        <span>{focus.progress.completed} of {focus.progress.opportunities} scheduled practices</span>
+        <strong>{focus.progress.completionRate}% konsisten</strong>
+        <span>{focus.progress.completed} dari {focus.progress.opportunities} kesempatan</span>
       </div>
     </section>}
 
     <section className="section-block week-card">
       <div className="section-heading">
-        <div><span className="eyebrow">THIS WEEK</span><h2>Showing up matters</h2></div>
-        <button className="more-button" onClick={() => setScreen('kid-journey')}>{week.percentage}% <Icon name="arrow" size={15} /></button>
+        <div><span className="eyebrow">MINGGU INI</span><h2>{week.percentage}% selesai</h2></div>
+        <button className="more-button" onClick={() => setScreen('parent-progress')}>Lihat detail <Icon name="arrow" size={15} /></button>
       </div>
       <div className="week-bars">
         {week.days.map(item => <div className={`week-day ${item.isFuture ? 'future' : ''}`} key={item.dateKey}>
@@ -90,13 +89,7 @@ export default function ParentHomeScreen({ state, onApprove, setScreen }) {
           <span>{item.short}</span>
         </div>)}
       </div>
-      <div className="week-streak">🔥 {streak} day streak</div>
-    </section>
-
-    <section className="graduation-nudge">
-      <span className="nudge-icon">🌈</span>
-      <div><strong>Growing into independence</strong><p>Habits graduate only after enough consistent practice.</p></div>
-      <button onClick={() => setScreen('habits')} aria-label="See habits"><Icon name="arrow" size={17} /></button>
+      <div className="week-streak">🔥 {streak} hari beruntun</div>
     </section>
   </div>
 }
