@@ -4,8 +4,8 @@ import Icon from '../components/Icon.jsx'
 const milestones = [
   { icon: '🌱', title: 'The first little steps', note: 'You began your routine', complete: true },
   { icon: '🌿', title: 'Finding your rhythm', note: 'Practice makes it feel familiar', complete: true },
-  { icon: '🌳', title: 'I can do it myself!', note: 'Your independence is growing', current: true },
-  { icon: '🏆', title: 'A habit of your own', note: 'Celebrate a new skill', future: true },
+  { icon: '🌳', title: 'Practicing with support', note: 'A grown-up is helping your routine grow', current: true },
+  { icon: '🏆', title: 'I can do it myself!', note: 'Celebrate a habit you can do on your own', future: true },
 ]
 export default function KidJourneyScreen({ state, setScreen, mode = 'kid' }) {
   const graduated = state.habits.filter(habit => habit.graduated)
