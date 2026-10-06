@@ -2,11 +2,13 @@
   "name": "KIDO — Small habits. Big kids.",
   "short_name": "KIDO",
   "description": "Build everyday independence, one small win at a time.",
-  "start_url": "/",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#fafafc",
   "theme_color": "#4f6ef7",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }
