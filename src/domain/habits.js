@@ -1,13 +1,20 @@
 export const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6]
 export const WEEKDAYS = [
-  { value: 1, short: 'M', label: 'Monday' },
-  { value: 2, short: 'T', label: 'Tuesday' },
-  { value: 3, short: 'W', label: 'Wednesday' },
-  { value: 4, short: 'T', label: 'Thursday' },
-  { value: 5, short: 'F', label: 'Friday' },
-  { value: 6, short: 'S', label: 'Saturday' },
-  { value: 0, short: 'S', label: 'Sunday' },
+  { value: 1, short: 'Sen', label: 'Senin' },
+  { value: 2, short: 'Sel', label: 'Selasa' },
+  { value: 3, short: 'Rab', label: 'Rabu' },
+  { value: 4, short: 'Kam', label: 'Kamis' },
+  { value: 5, short: 'Jum', label: 'Jumat' },
+  { value: 6, short: 'Sab', label: 'Sabtu' },
+  { value: 0, short: 'Min', label: 'Minggu' },
 ]
+
+export const TIME_LABELS = {
+  Morning: 'Pagi',
+  Afternoon: 'Sepulang sekolah',
+  Anytime: 'Kapan saja',
+  Evening: 'Malam',
+}
 
 export function getLocalDateKey(date = new Date()) {
   const year = date.getFullYear()
@@ -28,10 +35,16 @@ export function addDays(date, amount) {
   return next
 }
 
+function isDateInPauseRange(dateKey, range) {
+  if (!range?.start) return false
+  if (dateKey < range.start) return false
+  return !range.end || dateKey <= range.end
+}
+
 export function withHabitDefaults(habit, date = new Date()) {
   return {
     id: habit.id || `habit-${Date.now()}`,
-    title: habit.title || 'New habit',
+    title: habit.title || 'Kebiasaan baru',
     emoji: habit.emoji || '✨',
     time: habit.time || 'Anytime',
     goal: habit.goal || 'independence',
@@ -41,6 +54,10 @@ export function withHabitDefaults(habit, date = new Date()) {
     startedAt: habit.startedAt || getLocalDateKey(date),
     pendingDate: habit.pendingDate || null,
     doneDates: Array.isArray(habit.doneDates) ? habit.doneDates : [],
+    paused: Boolean(habit.paused),
+    pausePeriods: Array.isArray(habit.pausePeriods) ? habit.pausePeriods : [],
+    archived: Boolean(habit.archived),
+    archivedAt: habit.archivedAt || null,
     graduated: Boolean(habit.graduated),
     graduatedAt: habit.graduatedAt || null,
   }
@@ -49,8 +66,12 @@ export function withHabitDefaults(habit, date = new Date()) {
 export function isHabitScheduledOn(habit, date = new Date()) {
   const normalized = withHabitDefaults(habit, date)
   const dateKey = getLocalDateKey(date)
+
   if (dateKey < normalized.startedAt) return false
   if (normalized.graduatedAt && dateKey >= normalized.graduatedAt) return false
+  if (normalized.archivedAt && dateKey >= normalized.archivedAt) return false
+  if (normalized.pausePeriods.some(range => isDateInPauseRange(dateKey, range))) return false
+
   return normalized.days.includes(date.getDay())
 }
 
@@ -65,6 +86,7 @@ export function getDailyProgress(habits, date = new Date()) {
   const scheduled = getScheduledHabitsForDate(habits, date)
   const completed = scheduled.filter(habit => habit.doneDates.includes(dateKey))
   const percentage = scheduled.length ? Math.round((completed.length / scheduled.length) * 100) : 0
+
   return {
     dateKey,
     scheduled,
@@ -84,6 +106,7 @@ export function calculateStreak(habits, referenceDate = new Date()) {
 
   for (let i = 0; i < 370 && checkedScheduledDays < 365; i += 1) {
     const progress = getDailyProgress(habits, cursor)
+
     if (progress.total === 0) {
       cursor = addDays(cursor, -1)
       continue
@@ -91,6 +114,7 @@ export function calculateStreak(habits, referenceDate = new Date()) {
 
     checkedScheduledDays += 1
     if (!progress.goalMet) break
+
     streak += 1
     cursor = addDays(cursor, -1)
   }
@@ -133,7 +157,7 @@ function scheduledKeysForHabit(habit, referenceDate = new Date(), maxDays = 730)
   let cursor = start
 
   for (let i = 0; i < maxDays && cursor <= end; i += 1) {
-    if (normalized.days.includes(cursor.getDay())) keys.push(getLocalDateKey(cursor))
+    if (isHabitScheduledOn(normalized, cursor)) keys.push(getLocalDateKey(cursor))
     cursor = addDays(cursor, 1)
   }
 
@@ -153,7 +177,7 @@ export function getHabitProgress(habit, referenceDate = new Date()) {
   if (normalized.graduated) {
     return {
       stage: 'graduated',
-      label: 'Graduated',
+      label: 'Lulus',
       opportunities: opportunities.length,
       completed,
       completionRate,
@@ -163,17 +187,17 @@ export function getHabitProgress(habit, referenceDate = new Date()) {
   }
 
   let stage = 'learning'
-  let label = 'Learning'
+  let label = 'Belajar'
 
   if (opportunities.length >= 30 && last30.length === 30 && last30Rate >= 85) {
     stage = 'ready'
-    label = 'Ready to graduate'
+    label = 'Siap lulus'
   } else if (opportunities.length >= 21 && completionRate >= 80) {
     stage = 'consistent'
-    label = 'Consistent'
+    label = 'Konsisten'
   } else if (opportunities.length >= 8) {
     stage = 'building'
-    label = 'Building'
+    label = 'Membangun'
   }
 
   return {
@@ -188,12 +212,12 @@ export function getHabitProgress(habit, referenceDate = new Date()) {
 }
 
 const LEVEL_TITLES = [
-  'Brave Beginner',
-  'Little Explorer',
-  'Habit Builder',
-  'Growing Star',
-  'Independent Hero',
-  'Everyday Champion',
+  'Pemula Berani',
+  'Penjelajah Kecil',
+  'Pembentuk Kebiasaan',
+  'Bintang Tumbuh',
+  'Jago Mandiri',
+  'Juara Harian',
 ]
 
 export function getLevelInfo(xp = 0) {
@@ -202,6 +226,7 @@ export function getLevelInfo(xp = 0) {
   const level = Math.floor(safeXp / step) + 1
   const progressXp = safeXp % step
   const nextIn = step - progressXp
+
   return {
     level,
     title: LEVEL_TITLES[Math.min(level - 1, LEVEL_TITLES.length - 1)],

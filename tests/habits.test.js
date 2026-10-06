@@ -21,6 +21,10 @@ function habit(overrides = {}) {
     startedAt: '2026-10-01',
     pendingDate: null,
     doneDates: [],
+    paused: false,
+    pausePeriods: [],
+    archived: false,
+    archivedAt: null,
     graduated: false,
     graduatedAt: null,
     ...overrides,
@@ -33,6 +37,16 @@ test('weekday schedules exclude weekends', () => {
   assert.equal(isHabitScheduledOn(schoolHabit, new Date(2026, 9, 4)), false)
 })
 
+test('paused date ranges are removed from scheduled opportunities', () => {
+  const pausedHabit = habit({
+    pausePeriods: [{ start: '2026-10-03', end: '2026-10-05' }],
+  })
+
+  assert.equal(isHabitScheduledOn(pausedHabit, new Date(2026, 9, 2)), true)
+  assert.equal(isHabitScheduledOn(pausedHabit, new Date(2026, 9, 4)), false)
+  assert.equal(isHabitScheduledOn(pausedHabit, new Date(2026, 9, 6)), true)
+})
+
 test('streak counts completed scheduled days before an unfinished today', () => {
   const streakHabit = habit({
     doneDates: ['2026-10-03', '2026-10-04', '2026-10-05'],
@@ -43,6 +57,7 @@ test('streak counts completed scheduled days before an unfinished today', () => 
 test('habit becomes ready after 30 opportunities at 85 percent or better', () => {
   const doneDates = []
   const cursor = new Date(2026, 8, 7)
+
   for (let i = 0; i < 26; i += 1) {
     doneDates.push([
       cursor.getFullYear(),

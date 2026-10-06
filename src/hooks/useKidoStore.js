@@ -63,7 +63,7 @@ export function useKidoStore() {
   const requestHabit = id => setState(current => {
     const today = getLocalDateKey()
     const habit = current.habits.find(item => item.id === id)
-    if (!habit || habit.graduated || habit.doneDates.includes(today)) return current
+    if (!habit || habit.graduated || habit.paused || habit.archived || habit.doneDates.includes(today)) return current
 
     if (habit.approvalRequired) {
       return {
@@ -85,8 +85,47 @@ export function useKidoStore() {
 
   const addHabit = habit => setState(current => ({
     ...current,
-    habits: [...current.habits, withHabitDefaults({ ...habit, startedAt: getLocalDateKey() })],
+    habits: [
+      ...current.habits,
+      withHabitDefaults({
+        ...habit,
+        id: habit.id || `habit-${Date.now()}`,
+        startedAt: getLocalDateKey(),
+        paused: false,
+        archived: false,
+      }),
+    ],
   }))
+
+  const togglePauseHabit = id => setState(current => {
+    const today = getLocalDateKey()
+    return {
+      ...current,
+      habits: current.habits.map(habit => {
+        if (habit.id !== id) return habit
+
+        if (habit.paused) {
+          const pausePeriods = habit.pausePeriods.map(range =>
+            range.end ? range : { ...range, end: today })
+          return withHabitDefaults({ ...habit, paused: false, pausePeriods })
+        }
+
+        return withHabitDefaults({
+          ...habit,
+          paused: true,
+          pendingDate: null,
+          pausePeriods: [...habit.pausePeriods, { start: today, end: null }],
+        })
+      }),
+    }
+  })
+
+  const archiveHabit = id => patchHabit(id, {
+    archived: true,
+    archivedAt: getLocalDateKey(),
+    paused: false,
+    pendingDate: null,
+  })
 
   const graduateHabit = id => setState(current => {
     const habit = current.habits.find(item => item.id === id)
@@ -96,7 +135,13 @@ export function useKidoStore() {
       ...current,
       xp: current.xp + 100,
       habits: current.habits.map(item => item.id === id
-        ? { ...item, graduated: true, graduatedAt: getLocalDateKey(), pendingDate: null }
+        ? {
+            ...item,
+            graduated: true,
+            graduatedAt: getLocalDateKey(),
+            paused: false,
+            pendingDate: null,
+          }
         : item),
     }
   })
@@ -109,6 +154,8 @@ export function useKidoStore() {
     approveHabit,
     declineHabit,
     addHabit,
+    togglePauseHabit,
+    archiveHabit,
     graduateHabit,
   }
 }

@@ -1,6 +1,21 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { GOALS, STARTER_HABITS } from '../data/constants.js'
 import Icon from '../components/Icon.jsx'
+
+function pickStarterHabits(selected) {
+  const byGoal = selected.map(goal => STARTER_HABITS.filter(habit => habit.goal === goal))
+  const chosen = []
+
+  byGoal.forEach(list => {
+    if (list[0]) chosen.push(list[0])
+  })
+
+  byGoal.forEach(list => {
+    if (chosen.length < 4 && list[1]) chosen.push(list[1])
+  })
+
+  return chosen.slice(0, 4)
+}
 
 export function AddChildScreen({ child, setChild, onNext, onBack }) {
   return <OnboardingFrame step={1} onBack={onBack}>
@@ -9,24 +24,25 @@ export function AddChildScreen({ child, setChild, onNext, onBack }) {
       <div className="avatar-face">{child.avatar}</div>
       <span className="illustration-orb">☀</span>
     </div>
-    <span className="eyebrow">First, say hello</span>
-    <h1>Who’s growing<br/>with KIDO?</h1>
-    <p className="muted">We’ll make a routine that fits your child.</p>
 
-    <label className="field-label" htmlFor="child-name">Child’s name or nickname</label>
-    <input id="child-name" value={child.name} maxLength="24" placeholder="e.g. Bian" onChange={event => setChild({ ...child, name: event.target.value })} />
+    <span className="eyebrow">MULAI DARI SI KECIL</span>
+    <h1>Siapa yang akan<br/>bertumbuh bersama KIDO?</h1>
+    <p className="muted">Kita mulai dari nama panggilan, usia, dan teman kecilnya.</p>
 
-    <label className="field-label" htmlFor="child-age">Age</label>
+    <label className="field-label" htmlFor="child-name">Nama panggilan anak</label>
+    <input id="child-name" value={child.name} maxLength="24" placeholder="Contoh: Bian" onChange={event => setChild({ ...child, name: event.target.value })} />
+
+    <label className="field-label" htmlFor="child-age">Usia</label>
     <select id="child-age" value={child.age} onChange={event => setChild({ ...child, age: Number(event.target.value) })}>
-      {Array.from({ length: 7 }, (_, i) => i + 6).map(age => <option key={age} value={age}>{age} years old</option>)}
+      {Array.from({ length: 7 }, (_, i) => i + 6).map(age => <option key={age} value={age}>{age} tahun</option>)}
     </select>
 
-    <span className="field-label">Pick a little buddy</span>
+    <span className="field-label">Pilih teman kecil</span>
     <div className="avatar-options">
-      {['🦊','🐻','🐼','🐰','🐯','🦄'].map(avatar => <button key={avatar} className={`avatar-option ${child.avatar === avatar ? 'chosen' : ''}`} onClick={() => setChild({ ...child, avatar })} aria-label={`Choose ${avatar}`}>{avatar}</button>)}
+      {['🦊','🐻','🐼','🐰','🐯','🦄'].map(avatar => <button key={avatar} className={`avatar-option ${child.avatar === avatar ? 'chosen' : ''}`} onClick={() => setChild({ ...child, avatar })} aria-label={`Pilih ${avatar}`}>{avatar}</button>)}
     </div>
 
-    <button className="button button-primary button-full onboarding-cta" disabled={!child.name.trim()} onClick={onNext}>Next <Icon name="arrow" /></button>
+    <button className="button button-primary button-full onboarding-cta" disabled={!child.name.trim()} onClick={onNext}>Lanjut <Icon name="arrow" /></button>
   </OnboardingFrame>
 }
 
@@ -36,9 +52,9 @@ export function ChooseGoalsScreen({ selected, setSelected, onNext, onBack }) {
     : selected.length < 3 ? [...selected, id] : selected)
 
   return <OnboardingFrame step={2} onBack={onBack}>
-    <span className="eyebrow">Choose what matters today</span>
-    <h1>What would you<br/>like to practice?</h1>
-    <p className="muted">Pick 1–3 goals. Every goal has a ready-to-use starter habit.</p>
+    <span className="eyebrow">PILIH YANG PALING PENTING</span>
+    <h1>Apa yang ingin<br/>dibiasakan lebih dulu?</h1>
+    <p className="muted">Pilih 1–3 area. KIDO akan membuat starter routine yang singkat.</p>
 
     <div className="goal-list">
       {GOALS.map(goal => <button key={goal.id} onClick={() => toggle(goal.id)} className={`goal-option ${selected.includes(goal.id) ? 'chosen' : ''}`} aria-pressed={selected.includes(goal.id)}>
@@ -48,13 +64,13 @@ export function ChooseGoalsScreen({ selected, setSelected, onNext, onBack }) {
       </button>)}
     </div>
 
-    <div className="selection-count">{selected.length} of 3 selected</div>
-    <button className="button button-primary button-full onboarding-cta" disabled={!selected.length} onClick={onNext}>Make a routine <Icon name="arrow" /></button>
+    <div className="selection-count">{selected.length} dari 3 dipilih</div>
+    <button className="button button-primary button-full onboarding-cta" disabled={!selected.length} onClick={onNext}>Buat starter routine <Icon name="arrow" /></button>
   </OnboardingFrame>
 }
 
 export function StarterRoutineScreen({ selected, onStart, onBack }) {
-  const habits = STARTER_HABITS.filter(habit => selected.includes(habit.goal))
+  const habits = useMemo(() => pickStarterHabits(selected), [selected])
   const [included, setIncluded] = useState(habits.map(habit => habit.id))
 
   const toggle = id => setIncluded(included.includes(id)
@@ -63,10 +79,10 @@ export function StarterRoutineScreen({ selected, onStart, onBack }) {
 
   return <OnboardingFrame step={3} onBack={onBack}>
     <div className="routine-banner">
-      <div><span className="eyebrow">Your first routine</span><h1>A good day<br/>starts small.</h1></div>
+      <div><span className="eyebrow">STARTER ROUTINE</span><h1>Mulai kecil.<br/>Biar konsisten.</h1></div>
       <div className="routine-sun">☀️</div>
     </div>
-    <p className="muted">KIDO picked a small starter set from your goals. Keep only what feels useful.</p>
+    <p className="muted">KIDO membatasi starter routine maksimal 4 kebiasaan. Tambah lagi nanti kalau ritmenya sudah nyaman.</p>
 
     <div className="routine-list">
       {habits.map((habit, index) => <button key={habit.id} className={`routine-item ${included.includes(habit.id) ? 'included' : ''}`} onClick={() => toggle(habit.id)}>
@@ -74,21 +90,21 @@ export function StarterRoutineScreen({ selected, onStart, onBack }) {
         <span className="routine-emoji">{habit.emoji}</span>
         <span className="routine-name">
           {habit.title}
-          <small>{habit.xpValue} XP · {habit.approvalRequired ? 'parent checks' : 'self check'}</small>
+          <small>{habit.xpValue} XP · {habit.approvalRequired ? 'perlu dicek orang tua' : 'cek sendiri'}</small>
         </span>
         <span className="routine-toggle">{included.includes(habit.id) ? '✓' : '+'}</span>
       </button>)}
     </div>
 
-    <div className="tip-card"><span>💡</span><p>Small and steady works better than a long list. You can add more later.</p></div>
-    <button className="button button-primary button-full onboarding-cta" disabled={!included.length} onClick={() => onStart(habits.filter(habit => included.includes(habit.id)))}>Start our journey <Icon name="arrow" /></button>
+    <div className="tip-card"><span>💡</span><p>Tiga kebiasaan yang benar-benar dijalankan lebih baik daripada daftar panjang yang cepat ditinggalkan.</p></div>
+    <button className="button button-primary button-full onboarding-cta" disabled={!included.length} onClick={() => onStart(habits.filter(habit => included.includes(habit.id)))}>Lanjut & buat PIN <Icon name="arrow" /></button>
   </OnboardingFrame>
 }
 
 function OnboardingFrame({ children, step, onBack }) {
   return <main className="onboarding-page">
     <header className="onboarding-top">
-      <button className="icon-button" onClick={onBack} aria-label="Go back"><Icon name="back" /></button>
+      <button className="icon-button" onClick={onBack} aria-label="Kembali"><Icon name="back" /></button>
       <div className="step-progress">{[1,2,3].map(number => <span key={number} className={number <= step ? 'filled' : ''} />)}</div>
       <span className="step-count">{String(step).padStart(2, '0')}/03</span>
     </header>

@@ -4,9 +4,9 @@ import { calculateStreak, getHabitProgress, getLevelInfo } from '../domain/habit
 
 const STAGE_RANK = { learning: 1, building: 2, consistent: 3, ready: 4, graduated: 4 }
 
-export default function KidJourneyScreen({ state, setScreen, mode = 'kid' }) {
+export default function KidJourneyScreen({ state, setScreen }) {
   const graduated = state.habits.filter(habit => habit.graduated)
-  const active = state.habits.filter(habit => !habit.graduated)
+  const active = state.habits.filter(habit => !habit.graduated && !habit.archived)
   const progress = active.map(habit => getHabitProgress(habit))
   const highestRank = Math.max(0, ...progress.map(item => STAGE_RANK[item.stage] || 0))
   const streak = calculateStreak(state.habits)
@@ -21,18 +21,18 @@ export default function KidJourneyScreen({ state, setScreen, mode = 'kid' }) {
   const currentIndex = flags.every(Boolean) ? 3 : Math.max(0, flags.findIndex(done => !done))
 
   const milestones = [
-    { icon: '🌱', title: 'The first little steps', note: 'You began your routine' },
-    { icon: '🌿', title: 'Finding your rhythm', note: 'Practice makes it feel familiar' },
-    { icon: '🌳', title: 'I can do it myself!', note: 'Consistency is turning into confidence' },
-    { icon: '🏆', title: 'A habit of your own', note: 'Celebrate a graduated habit' },
+    { icon: '🌱', title: 'Langkah pertama', note: 'Kamu mulai punya rutinitas' },
+    { icon: '🌿', title: 'Mulai terbiasa', note: 'Latihan membuatnya terasa lebih mudah' },
+    { icon: '🌳', title: 'Aku bisa sendiri', note: 'Konsistensi berubah jadi percaya diri' },
+    { icon: '🏆', title: 'Kebiasaan sudah melekat', note: 'Rayakan habit yang sudah lulus' },
   ]
 
   return <div className="app-content kid-content">
     <ScreenHeader
-      eyebrow={mode === 'parent' ? 'PROGRESS & INDEPENDENCE' : 'YOUR GROWING STORY'}
-      title={mode === 'parent' ? `Look how far ${state.child.name} has come` : 'Look how far you’ve come'}
-      subtitle={mode === 'parent' ? 'Every little practice is building confidence.' : 'Every little practice helps you grow.'}
-      action={<span className="streak-pill">🔥 {streak}</span>}
+      eyebrow="PERJALANANKU"
+      title="Lihat bagaimana kamu bertumbuh"
+      subtitle="Setiap latihan kecil membuatmu makin mandiri."
+      action={<span className="streak-pill">🔥 {streak} hari</span>}
     />
 
     <section className="journey-profile">
@@ -40,14 +40,14 @@ export default function KidJourneyScreen({ state, setScreen, mode = 'kid' }) {
       <div>
         <span className="card-kicker">LEVEL {level.level}</span>
         <h2>{level.title}</h2>
-        <p>{state.xp} XP · {level.nextIn} XP to the next level.</p>
+        <p>{state.xp} XP · {level.nextIn} XP lagi ke level berikutnya.</p>
       </div>
       <span className="journey-badge">⭐</span>
     </section>
 
     <section className="journey-path">
       <div className="path-heading">
-        <div><span className="eyebrow">YOUR INDEPENDENCE PATH</span><h2>Step by step</h2></div>
+        <div><span className="eyebrow">JALUR KEMANDIRIAN</span><h2>Selangkah demi selangkah</h2></div>
         <span className="path-count">{String(flags.filter(Boolean).length).padStart(2, '0')} / 04</span>
       </div>
 
@@ -56,13 +56,14 @@ export default function KidJourneyScreen({ state, setScreen, mode = 'kid' }) {
           const complete = flags[index]
           const current = index === currentIndex && !complete
           const future = !complete && !current
+
           return <div className={`milestone ${complete ? 'complete' : ''} ${current ? 'current' : ''} ${future ? 'future' : ''}`} key={item.title}>
             <div className="milestone-rail">
               <span className="milestone-node">{complete ? <Icon name="check" size={15} /> : item.icon}</span>
               {index < milestones.length - 1 && <i />}
             </div>
             <div className="milestone-copy"><strong>{item.title}</strong><small>{item.note}</small></div>
-            {current && <span className="now-label">YOU’RE HERE</span>}
+            {current && <span className="now-label">KAMU DI SINI</span>}
           </div>
         })}
       </div>
@@ -71,21 +72,21 @@ export default function KidJourneyScreen({ state, setScreen, mode = 'kid' }) {
     <section className="independent-card">
       <span className="independent-emoji">🌟</span>
       <div>
-        <span className="eyebrow">THINGS I CAN DO BY MYSELF</span>
+        <span className="eyebrow">SUDAH BISA SENDIRI</span>
         {graduated.length
           ? <ul>{graduated.map(habit => <li key={habit.id}>{habit.title}</li>)}</ul>
-          : <><h3>Your list is ready for a first.</h3><p>Keep practicing. KIDO will tell your grown-up when a habit may be ready to graduate.</p></>}
+          : <><h3>Daftarnya masih kosong.</h3><p>Terus latihan. KIDO akan memberi tahu orang tuamu ketika sebuah kebiasaan siap lulus.</p></>}
       </div>
     </section>
 
     <section className="achievement-card">
       <div className="achievement-icon">🏅</div>
       <div>
-        <span className="eyebrow">A LITTLE CELEBRATION</span>
-        <strong>{streak ? `${streak} day streak!` : 'A fresh start today'}</strong>
-        <p>{streak ? 'You’ve been showing up. That matters.' : 'One small win is enough to begin.'}</p>
+        <span className="eyebrow">KEMENANGAN KECIL</span>
+        <strong>{streak ? `${streak} hari beruntun!` : 'Mulai lagi hari ini'}</strong>
+        <p>{streak ? 'Kamu terus berusaha. Itu yang penting.' : 'Satu langkah kecil cukup untuk memulai.'}</p>
       </div>
-      {mode === 'kid' && <button onClick={() => setScreen('kid-today')} aria-label="Back to today"><Icon name="arrow" size={17} /></button>}
+      <button onClick={() => setScreen('kid-today')} aria-label="Kembali ke hari ini"><Icon name="arrow" size={17} /></button>
     </section>
   </div>
 }
