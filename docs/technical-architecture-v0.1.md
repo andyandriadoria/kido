@@ -132,7 +132,7 @@ The manifest uses relative `start_url`, `scope`, and icon references. The servic
 
 GitHub Actions:
 
-1. runs `npm ci`,
+1. runs `npm install`,
 2. runs domain tests,
 3. builds the Vite bundle,
 4. deploys `dist/` to GitHub Pages on pushes to `main`.
@@ -157,7 +157,7 @@ These should be addressed in KIDO v0.2 Cloud MVP after the local habit loop is v
 
 ## 12. Quality gates
 
-- `npm test` must pass all habit-domain tests.
+- `npm install` must resolve dependencies successfully.\n- `npm test` must pass all habit-domain tests.
 - `npm run build` must produce a Vite production bundle.
 - Every onboarding goal must produce at least one starter habit.
 - Weekday schedules must not appear on unscheduled days.

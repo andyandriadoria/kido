@@ -30,7 +30,7 @@ KIDO is an interactive frontend prototype with real local habit logic. It is sti
 ## Local development
 
 ```bash
-npm ci
+npm install
 npm test
 npm run dev
 ```
